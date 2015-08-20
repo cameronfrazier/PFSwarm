@@ -76,7 +76,32 @@ void Satellite::step(){this->step(1.0);}
 void Satellite::step(double timestep){
     this->_state.step(timestep);
 }
-        
+ 
+
+State Satellite::forceRepulsive(Satellite * target){
+    State stateT = target->getState();    
+    State delta = this->_state.lengthFrom(&stateT);
+
+    State unit = delta.unit();
+
+    double tSpacing = this->_settings->simulationTargetSpacing();    
+    double force = pow(tSpacing,2)*pow(delta.magnitude(),-2);
+
+    unit.x(unit.x()*force);
+    unit.y(unit.y()*force);
+    unit.z(unit.z()*force);
+    
+    return unit;
+}
+
+
+State Satellite::forceAttractive(Satellite * target){ return State(); };
+State Satellite::forceDrag(){ return State(); };
+State Satellite::forceGravity(State * gravity){ return State(); };
+
+
+
+
 void Satellite::print()
 {
     std::cout << "Satellite ID:" << this->_id << std::endl;

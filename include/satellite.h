@@ -10,45 +10,50 @@
 class Satellite
 {
 private:
-	// List of neighbouring satellites
-	std::vector<Satellite*> _neighbours;
+    // List of neighbouring satellites
+    std::vector<Satellite*> _neighbours;
 
-	// List of active psp points
-	std::vector<PSP*> _psps;
+    // List of active psp points
+    std::vector<PSP*> _psps;
 
-	// Current satellite state.
-	State _state;
-        
-        // Satellite ID
-        int _id;
+    // Current satellite state.
+    State _state;
 
-        // pointer to settings object
-        SwarmSettings * _settings;
+    // Satellite ID
+    int _id;
+
+    // pointer to settings object
+    SwarmSettings * _settings;
         
 
 public:
-	Satellite(int satID, SwarmSettings * settings);
-	Satellite(int satID, SwarmSettings * settings, State initial_state);
-	~Satellite() {};
-    
-        int getID();
-        State getState();
-        
-	void addNeighbour(Satellite * satellite);
-	void removeNeighbour(int index);
-        void clearNeighbours();
-        
-        double rangeToTarget(Satellite * target);
+    Satellite(int satID, SwarmSettings * settings);
+    Satellite(int satID, SwarmSettings * settings, State initial_state);
+    ~Satellite() {};
 
-	void addPSP(PSP * psp);
-	void removePSP(int index);
+    int getID();
+    State getState();
+
+    void addNeighbour(Satellite * satellite);
+    void removeNeighbour(int index);
+    void clearNeighbours();
+
+    double rangeToTarget(Satellite * target);
+
+    void addPSP(PSP * psp);
+    void removePSP(int index);
+
+    void applyForce(State force);
+
+    void step();
+    void step(double timestep);
+
+    State forceRepulsive(Satellite * target);
+    State forceAttractive(Satellite * target);
+    State forceDrag();
+    State forceGravity(State * gravity);
         
-        void applyForce(State force);
-        
-        void step();
-        void step(double timestep);
-        
-        void print();
+    void print();
 };
 
 #endif

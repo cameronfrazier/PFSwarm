@@ -11,14 +11,6 @@ PFSwarm::~PFSwarm(){
 }
 
 
-//void PFSwarm::run(){
-//    this->run(  this->_settings->simulationCycleLimit(), 
-//                this->_settings->simulationConvergenceLimit() );
-//}
-//
-//void PFSwarm::run(unsigned int cycles){
-//    this->run(cycles, this->_settings->simulationConvergenceLimit() );
-//}
 void PFSwarm::run(int cycles, double convergence_limit){
     int count = 0;
     double convergence_error = 1;
@@ -154,7 +146,7 @@ void PFSwarm::printRepulsiveForceTable(){
     for (itx = begin ; itx != end; ++itx){
         std::cout << (*itx)->getID() ;
         for (ity = begin ; ity != end; ++ity){
-            State force = RAVE::forceRepulsive((*itx),(*ity),this->_settings);
+            State force = (*ity)->forceRepulsive((*itx));
             std::cout << "\t" << force.magnitude();
         }
         std::cout << std::endl;
