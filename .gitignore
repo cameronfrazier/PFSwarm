@@ -1,6 +1,5 @@
 # IDE folder
-./nbproject
-./nbproject/*
+nbproject/
 
 # Compiled Object files
 *.slo
