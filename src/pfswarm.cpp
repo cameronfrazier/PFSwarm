@@ -4,10 +4,10 @@
 PFSwarm::PFSwarm(SwarmSettings * settings){
     this->_settings = settings;
 }
+
 PFSwarm::~PFSwarm(){
     std::cout << "Cleaning up!!" << std::endl;
     this->clearSatellites();
-    
 }
 
 
@@ -29,9 +29,9 @@ void PFSwarm::run(int cycles, double convergence_limit){
 
         this->_gravity.step();
         
-        std::vector<Satellite*>::iterator it;
-        for (it = this->_satellites.begin() ; it != this->_satellites.end(); ++it){    
-            (*it)->step();
+        for (auto &sat: this->_satellites){ 
+            sat->calculateForces();
+            sat->step();
         }
         
         if (count % 100 == 0)
@@ -69,7 +69,7 @@ void PFSwarm::setupSwarm(int cntSatellite)
         init_state.x(uniform_dist(generator));
         init_state.y(uniform_dist(generator));
         init_state.z(uniform_dist(generator));
-        this->addSatellites(new Satellite(idx, this->_settings, init_state));
+        this->addSatellites(new Satellite(idx, this->_settings, &this->_satellites, init_state));
     }
 }
 
@@ -94,35 +94,31 @@ void PFSwarm::removeSatellites(int index)
 void PFSwarm::clearSatellites()
 {
     std::vector<Satellite*>::iterator it;
-    for (it = this->_satellites.begin() ; it != this->_satellites.end(); ++it){
-        std::cout << "    Removing Satellite: " << (*it)->getID() << std::endl;
-        delete (*it);
+    for (auto &sat: this->_satellites){
+        std::cout << "    Removing Satellite: ";
+        std::cout << sat->getID() << std::endl;
+        delete sat;
     }
     
     this->_satellites.clear();
 }
 
+
 /*
  Print range table
  */
 void PFSwarm::printRangeTable(){
-    std::vector<Satellite*>::iterator itx;
-    std::vector<Satellite*>::iterator ity;
-    
-    auto begin = this->_satellites.begin();
-    auto end = this->_satellites.end();
     
     std::cout << std::fixed << std::setprecision(2);
     
-    for (itx = begin ; itx != end; ++itx)
-        std::cout << "\t" << (*itx)->getID();
+    for (auto &sat: this->_satellites) 
+        std::cout << "\t" << sat->getID();
     std::cout << std::endl;
     
-    for (itx = begin ; itx != end; ++itx){
-        std::cout << (*itx)->getID() ;
-        for (ity = begin ; ity != end; ++ity){
-            std::cout << "\t" << (*ity)->rangeToTarget((*itx));
-        }
+    for (auto &saty: this->_satellites){
+        std::cout << saty->getID();
+        for (auto &satx: this->_satellites)
+            std::cout << "\t" << satx->rangeToTarget(saty);
         std::cout << std::endl;
     }
 }
@@ -130,23 +126,16 @@ void PFSwarm::printRangeTable(){
 /*
  Print repulsive force table
  */
-void PFSwarm::printRepulsiveForceTable(){
-    std::vector<Satellite*>::iterator itx;
-    std::vector<Satellite*>::iterator ity;
-    
-    auto begin = this->_satellites.begin();
-    auto end = this->_satellites.end();
-    
+void PFSwarm::printRepulsiveForceTable(){    
     std::cout << std::fixed << std::setprecision(2);
-    
-    for (itx = begin ; itx != end; ++itx)
-        std::cout << "\t" << (*itx)->getID();
+    for(auto &sat : this->_satellites) 
+        std::cout << "\t" << sat->getID();
     std::cout << std::endl;
     
-    for (itx = begin ; itx != end; ++itx){
-        std::cout << (*itx)->getID() ;
-        for (ity = begin ; ity != end; ++ity){
-            State force = (*ity)->forceRepulsive((*itx));
+    for(auto &saty: this->_satellites){
+        std::cout << saty->getID();
+        for (auto &satx: this->_satellites){
+            State force = satx->forceRepulsive(saty);
             std::cout << "\t" << force.magnitude();
         }
         std::cout << std::endl;
@@ -163,7 +152,5 @@ void PFSwarm::print()
     
     std::cout << "Current Swarm size: " << this->_satellites.size() << std::endl;
         
-    std::vector<Satellite*>::iterator it;
-    for (it = this->_satellites.begin() ; it != this->_satellites.end(); ++it)
-        (*it)->print();
+    for (auto &sat : this->_satellites) sat->print();
 }

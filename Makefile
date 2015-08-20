@@ -1,8 +1,7 @@
 CC=g++
 SRCDIR=./src/
 INCDIR=./include/
-LIST=swarmsettings.cpp pfswarm.cpp psp.cpp satellite.cpp state.cpp forcefunctions.cpp simulation.cpp 
-SOURCES=$(addprefix $(SRCDIR), $(LIST))
+SOURCES=$(wildcard $(SRCDIR)*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=simulation
 
@@ -18,4 +17,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 	
 clean:
-	rm -f $(EXECUTABLE) *.o
+	rm -f $(EXECUTABLE) $(OBJECTS)

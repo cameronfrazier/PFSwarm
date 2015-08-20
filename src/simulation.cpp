@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
     pf.printRangeTable();
     pf.printRepulsiveForceTable();
-    //pf.print();
+    pf.print();
 
     exit(EXIT_SUCCESS);
 }

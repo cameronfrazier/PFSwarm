@@ -8,7 +8,6 @@
 #include "swarmsettings.h"
 #include "satellite.h"
 #include "state.h"
-#include "forcefunctions.h"
 
 #define IS_THREE_DIMENSTIONAL
 //#define IS_THREE_DIMENSTIONAL = false
@@ -22,22 +21,21 @@ private:
     State _gravity;
 
 public:
-	PFSwarm(SwarmSettings * settings);
-	~PFSwarm();
-	
-//	void run();
-//	void run(unsigned int cycles);
-	void run(int cycles = -1, double convergence = NAN);
-	void setupSwarm();
-	void setupSwarm(int numSatellites);
+    
+    PFSwarm(SwarmSettings * settings);
+    ~PFSwarm();
 
-        void addSatellites(Satellite * satellite);
-        void removeSatellites(int index);
-        void clearSatellites();
-        
-        void printRangeTable();
-        void printRepulsiveForceTable();
-        void print();
+    void run(int cycles = -1, double convergence = NAN);
+    void setupSwarm();
+    void setupSwarm(int numSatellites);
+
+    void addSatellites(Satellite * satellite);
+    void removeSatellites(int index);
+    void clearSatellites();
+
+    void printRangeTable();
+    void printRepulsiveForceTable();
+    void print();
 };
 
 #endif

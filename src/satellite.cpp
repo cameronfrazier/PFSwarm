@@ -3,16 +3,18 @@
 /*
  Constructor, accepts a satellite ID and an optionsal initial State
  */
-Satellite::Satellite(int satID, SwarmSettings * settings)
+Satellite::Satellite(int satID, SwarmSettings * settings, std::vector<Satellite*> * swarm)
 {
     this->_id = satID;
     this->_settings = settings;
+    this->_swarm = swarm;
 }
 
-Satellite::Satellite(int satID, SwarmSettings * settings, State initial_state)
+Satellite::Satellite(int satID, SwarmSettings * settings, std::vector<Satellite*> * swarm, State initial_state)
 {
     this->_id = satID;
     this->_settings = settings;
+    this->_swarm = swarm;
     this->_state = initial_state;
 }
 
@@ -72,30 +74,110 @@ void Satellite::applyForce(State force){
     this->_state.vz( this->_state.vz() + accelz*dt );
 }
 
-void Satellite::step(){this->step(1.0);}
 void Satellite::step(double timestep){
     this->_state.step(timestep);
 }
- 
 
-State Satellite::forceRepulsive(Satellite * target){
-    State stateT = target->getState();    
-    State delta = this->_state.lengthFrom(&stateT);
+void Satellite::findNeighbours(){
+    double rangeLimit = 0;
+    unsigned int neighbourCount = this->_settings->satelliteNeighbourhoodSize();
+    bool isNeighbourhoodFull;
+    
+    double range;
+    double rangeTmp;
+    
+    this->_neighbours.clear();
+    
+    std::cout << "Finding Neighbours!!" << std::endl;
+    for(auto &sat : *this->_swarm){
+        
+        // Ignore ourselves
+        if(sat->getID() == this->getID()) continue;
+        
+        isNeighbourhoodFull = (this->_neighbours.size() >= neighbourCount);
+        range = this->rangeToTarget(sat);
+        
+        if( isNeighbourhoodFull) {
+            if(range > rangeLimit) continue; 
+        }
+        else {
+            // Expand to accept considered satellites
+            if (range > rangeLimit) 
+                rangeLimit = range;
+        }
+        
+        if( this->_neighbours.size() == 0 ){
+            this->_neighbours.push_back(sat);
+        } else {
+            // Loop over current neighbours and insert where appropriate
+            for( unsigned int idx = this->_neighbours.size(); idx > 0; idx-- ){
+                rangeTmp = this->rangeToTarget(this->_neighbours[idx-1]);
+                if(range > rangeTmp ){            
+                    this->_neighbours.insert(this->_neighbours.begin()+idx, sat);
+                    break;              
+                } else if (idx == 1) {            
+                    this->_neighbours.insert(this->_neighbours.begin(), sat);
+                    break; 
+                } 
+            }
+        }
+        
+        if (this->_neighbours.size() > neighbourCount){
+            rangeLimit = this->rangeToTarget((this->_neighbours[neighbourCount-1]));
+        }
+    }
+    this->_neighbours.resize(neighbourCount);
+}
 
-    State unit = delta.unit();
+void Satellite::calculateForces(){
+    this->findNeighbours();
+    this->print();
+    State fObs = this->forceRepulsive();
+    std::cout << "\tNet repulsive force: " << fObs.magnitude() << std::endl;
+}
 
-    double tSpacing = this->_settings->simulationTargetSpacing();    
-    double force = pow(tSpacing,2)*pow(delta.magnitude(),-2);
+State Satellite::forceRepulsive(Satellite * sat){
+    double force;
+    double tSpacing = this->_settings->simulationTargetSpacing();
+    State stateT, delta, unit;   
+    
+        stateT = sat->getState();    
+        delta = this->_state.lengthFrom(&stateT);
 
-    unit.x(unit.x()*force);
-    unit.y(unit.y()*force);
-    unit.z(unit.z()*force);
+        unit = delta.unit();
+    
+        force = pow(tSpacing,2)*pow(delta.magnitude(),-2);
+
+        unit.x(unit.x()*force);
+        unit.y(unit.y()*force);
+        unit.z(unit.z()*force);
     
     return unit;
 }
+State Satellite::forceRepulsive(){
+    double force;
+    double tSpacing = this->_settings->simulationTargetSpacing();
+    State stateT, delta, unit;
+    State net = State();
+    
+    for( auto &sat : this->_neighbours){
+        stateT = sat->getState();    
+        delta = this->_state.lengthFrom(&stateT);
+
+        unit = delta.unit();
+    
+        force = pow(tSpacing,2)*pow(delta.magnitude(),-2);
+
+        net.x(net.x() + unit.x()*force);
+        net.y(net.y() + unit.y()*force);
+        net.z(net.z() + unit.z()*force);
+    }
+    
+    return net;
+}
 
 
-State Satellite::forceAttractive(Satellite * target){ return State(); };
+State Satellite::forceAttractive(){ return State(); };
 State Satellite::forceDrag(){ return State(); };
 State Satellite::forceGravity(State * gravity){ return State(); };
 
@@ -104,6 +186,8 @@ State Satellite::forceGravity(State * gravity){ return State(); };
 
 void Satellite::print()
 {
-    std::cout << "Satellite ID:" << this->_id << std::endl;
-    this->_state.print();
+    std::cout << "Satellite ID:" << this->_id << " - " << this->_neighbours.size() << " neighbours " << std::endl;
+    for(auto &sat: this->_neighbours)
+        std::cout << "\t" << sat->getID() << "\t" << this->rangeToTarget(sat) << std::endl;
+//    this->_state.print();
 }

@@ -2,6 +2,8 @@
 #define PF_SATELLITE
 
 #include <vector>
+#include <limits>       // std::numeric_limit
+#include <algorithm>    // std::sort
 
 #include "psp.h"
 #include "state.h"
@@ -24,11 +26,13 @@ private:
 
     // pointer to settings object
     SwarmSettings * _settings;
+    
+    std::vector<Satellite*> * _swarm;
         
 
 public:
-    Satellite(int satID, SwarmSettings * settings);
-    Satellite(int satID, SwarmSettings * settings, State initial_state);
+    Satellite(int satID, SwarmSettings * settings, std::vector<Satellite*> * swarm);
+    Satellite(int satID, SwarmSettings * settings, std::vector<Satellite*> * swarm, State initial_state);
     ~Satellite() {};
 
     int getID();
@@ -42,17 +46,21 @@ public:
 
     void addPSP(PSP * psp);
     void removePSP(int index);
-
+    
+    void findNeighbours();
     void applyForce(State force);
 
-    void step();
-    void step(double timestep);
+    void step(double timestep = 1.0);
+    
+    void calculateForces();
 
-    State forceRepulsive(Satellite * target);
-    State forceAttractive(Satellite * target);
+    State forceRepulsive(Satellite * sat);
+    State forceRepulsive();
+    State forceAttractive();
     State forceDrag();
     State forceGravity(State * gravity);
-        
+   
+    
     void print();
 };
 

@@ -12,6 +12,24 @@
 #include <math.h>
 #include <iostream>
 
+#define SETTING_ABS_INT(func,name) \
+int SwarmSettings::func(double _val){\
+    if( ! isnan( _val ) ) { this->name = (int) abs(_val); }\
+    return this->name;\
+}
+
+#define SETTING_ABS_DOUBLE(func,name) \
+double SwarmSettings::func(double _val){\
+    if( ! isnan( _val ) ) this->name = abs(_val);\
+    return this->name;\
+}
+
+#define SETTING_DOUBLE(func,name) \
+double SwarmSettings::func(double _val){\
+    if( ! isnan( _val ) ) this->name = _val;\
+    return this->name;\
+}
+
 class SwarmSettings
 {
 private:
@@ -27,6 +45,12 @@ private:
     double simulation_target_spacing;
     double simulation_timestep;
     
+    // Force gain values
+    double force_gain_repulsive;
+    double force_gain_attractive;
+    double force_gain_drag;
+    double force_gain_gravity;
+    
 public:
     SwarmSettings();
     ~SwarmSettings();
@@ -40,6 +64,11 @@ public:
     double simulationConvergenceLimit(double _val = NAN);
     double simulationTargetSpacing(double _val = NAN);
     double simulationTimestep(double _val = NAN);
+    
+    double forceGainRepulsive(double _val = NAN);
+    double forceGainAttractive(double _val = NAN);
+    double forceGainDrag(double _val = NAN);
+    double forceGainGravity(double _val = NAN);
     
     void print();
 };

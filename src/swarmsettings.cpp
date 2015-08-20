@@ -1,35 +1,23 @@
 #include "swarmsettings.h"
 
-#define SETTING_ABS_INT(func,name) \
-int SwarmSettings::func(double _val){\
-    if( ! isnan( _val ) ) { this->name = (int) abs(_val); }\
-    return this->name;\
-}
-
-#define SETTING_ABS_DOUBLE(func,name) \
-double SwarmSettings::func(double _val){\
-    if( ! isnan( _val ) ) this->name = abs(_val);\
-    return this->name;\
-}
-
 SwarmSettings::SwarmSettings(){
     // Satellite Settings
-    this->satelliteNeighbourhoodSize(6);
+    this->satelliteNeighbourhoodSize(5);
     this->satelliteMass(1);
     this->satelliteMomentOfInertia(1);
     
     // Simulation Settings
-    this->simulationSatelliteCount(7);
+    this->simulationSatelliteCount(15);
     this->simulationCycleLimit(5);
     this->simulationConvergenceLimit(0.0);
     this->simulationTargetSpacing(50);
     this->simulationTimestep(1.0);
     
     // Force Settings
-//    this->force_gain_repulsive(10);
-//    this->force_gain_attractive(10);
-//    this->force_gain_drag(10);
-//    this->force_gain_gravity(10);
+    this->forceGainRepulsive(10);
+    this->forceGainAttractive(10);
+    this->forceGainDrag(10);
+    this->forceGainGravity(10);
 }
 SwarmSettings::~SwarmSettings(){}
 
@@ -43,45 +31,10 @@ SETTING_ABS_DOUBLE(simulationConvergenceLimit,simulation_convergence_limit)
 SETTING_ABS_DOUBLE(simulationTargetSpacing,simulation_target_spacing)
 SETTING_ABS_DOUBLE(simulationTimestep,simulation_timestep)
 
-
-
-//int SwarmSettings::satelliteNeighbourhoodSize(double _val){
-//    if( ! isnan( _val ) ) { this->satellite_neighbourhood_size = (int) abs(_val); }
-//    return this->satellite_neighbourhood_size;
-//}
-//double SwarmSettings::satelliteMass(double _val){
-//    if( ! isnan( _val ) ) this->satellite_mass = abs(_val);
-//    return this->satellite_mass;
-//}
-//double SwarmSettings::satelliteMomentOfInertia(double _val){
-//    if( ! isnan( _val ) ) this->satellite_moment_of_inertia = abs(_val);
-//    return this->satellite_moment_of_inertia;
-//}
-//
-//int SwarmSettings::simulationSatelliteCount(double _val){
-//    if( ! isnan( _val ) ) this->simulation_satellite_count = (int) abs(_val);
-//    return this->simulation_satellite_count;
-//}
-//
-//int SwarmSettings::simulationCycleLimit(double _val){
-//    if( ! isnan( _val ) ) this->simulation_cycle_limit = (int) abs(_val);
-//    return this->simulation_cycle_limit;
-//}
-//
-//double SwarmSettings::simulationConvergenceLimit(double _val){
-//    if( ! isnan( _val ) ) this->simulation_convergence_limit = abs(_val);
-//    return this->simulation_convergence_limit;
-//}
-//
-//double SwarmSettings::simulationTargetSpacing(double _val){
-//    if( ! isnan( _val ) ) this->simulation_target_spacing = abs(_val);
-//    return this->simulation_target_spacing;
-//}
-//
-//double SwarmSettings::simulationTimestep(double _val){
-//    if( ! isnan( _val ) ) this->simulation_timestep = abs(_val);
-//    return this->simulation_timestep;
-//}
+SETTING_DOUBLE(forceGainRepulsive,force_gain_repulsive)
+SETTING_DOUBLE(forceGainAttractive,force_gain_attractive)
+SETTING_DOUBLE(forceGainDrag,force_gain_drag)
+SETTING_DOUBLE(forceGainGravity,force_gain_gravity)
 
 void SwarmSettings::print(){
     std::cout << "Current Settings:" << std::endl;
