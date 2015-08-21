@@ -5,25 +5,27 @@ SwarmSettings::SwarmSettings(){
     this->satelliteNeighbourhoodSize(5);
     this->satelliteMass(1);
     this->satelliteMomentOfInertia(1);
+    this->satelliteForceLimit(10);
     
     // Simulation Settings
     this->simulationSatelliteCount(15);
-    this->simulationCycleLimit(5);
+    this->simulationCycleLimit(15);
     this->simulationConvergenceLimit(0.0);
     this->simulationTargetSpacing(50);
     this->simulationTimestep(1.0);
     
     // Force Settings
-    this->forceGainRepulsive(10);
-    this->forceGainAttractive(10);
-    this->forceGainDrag(10);
-    this->forceGainGravity(10);
+    this->forceGainRepulsive(1);
+    this->forceGainAttractive(1);
+    this->forceGainDrag(-0.2);
+    this->forceGainGravity(1);
 }
 SwarmSettings::~SwarmSettings(){}
 
 SETTING_ABS_INT(satelliteNeighbourhoodSize, satellite_neighbourhood_size)
 SETTING_ABS_DOUBLE(satelliteMass,satellite_mass)
 SETTING_ABS_DOUBLE(satelliteMomentOfInertia,satellite_moment_of_inertia)
+SETTING_ABS_DOUBLE(satelliteForceLimit,satellite_force_limit)
 
 SETTING_ABS_INT(simulationSatelliteCount, simulation_satellite_count)
 SETTING_ABS_INT(simulationCycleLimit, simulation_cycle_limit)

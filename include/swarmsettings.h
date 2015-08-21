@@ -12,6 +12,9 @@
 #include <math.h>
 #include <iostream>
 
+
+#define MSG(message) std::cout << message << std::endl;
+
 #define SETTING_ABS_INT(func,name) \
 int SwarmSettings::func(double _val){\
     if( ! isnan( _val ) ) { this->name = (int) abs(_val); }\
@@ -37,6 +40,7 @@ private:
     int satellite_neighbourhood_size;
     double satellite_mass;
     double satellite_moment_of_inertia;
+    double satellite_force_limit;
     
     // Simulation Settings
     int simulation_satellite_count;
@@ -58,6 +62,7 @@ public:
     int satelliteNeighbourhoodSize(double _val = NAN);
     double satelliteMass(double _val = NAN);
     double satelliteMomentOfInertia(double _val = NAN);
+    double satelliteForceLimit(double _val = NAN);
     
     int simulationSatelliteCount(double _val = NAN);
     int simulationCycleLimit(double _val = NAN);

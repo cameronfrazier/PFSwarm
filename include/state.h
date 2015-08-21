@@ -5,13 +5,13 @@
 #include <iomanip>
 #include <math.h>
 
+#include "vector3.h"
+
 class State
 {
-private:
     bool	THREE_DIMENSION;
 
-    // State values
-    //  position and orienation
+    
     double 	 _x,  _y,  _z,  _roll,  _pitch,  _yaw;
     //  translation and rotation motion
     double	_vx, _vy, _vz, _wroll, _wpitch, _wyaw;
@@ -19,27 +19,27 @@ private:
     void initialize();
 
 public:
+    
+    // State values
+    //  position and orienation
+    Vector3<double> position;
+    Vector3<double> velocity;
+    Vector3<double> orientation;
+    Vector3<double> rate;
+    
     // deltas when calculated
-    double	length, angle, speed, rate;
-
-    State();
-    explicit State(bool threeD);
+    double	length, angle, speed;
+    State(bool threeD = true);
     State(const State &initial_state);
     ~State() {};
 
-    State lengthTo(State * toState);
-    State lengthFrom(State * fromState);
-
-    State speedTo(State * toState);
-    State speedFrom(State * fromState);
-
-    State rateTo(State * toState);
-    State rateFrom(State * fromState);
+    State deltaPosition(State * other);
+    State deltaSpeed(State * other);
+    State deltaOrientation(State * other);
+    State deltaRate(State * other);
 
     void step(double timestep = 1.0);
 
-    State unit();
-    double magnitude();
 
     double x(double _x = NAN);
     double y(double _y = NAN);
@@ -55,6 +55,16 @@ public:
     double wpitch(double _wpitch = NAN);
     double wyaw(double _wyaw = NAN);
 
+    State unit();
+    double magnitude();
+    
+    void normalize();
+    
+    void scale(double factor);
+    void scalePosition(double factor);
+    void scaleVelocity(double factor);
+    void scaleRate(double factor);
+    
     void print();
         
 };

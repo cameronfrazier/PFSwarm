@@ -12,6 +12,15 @@
 class Satellite
 {
 private:
+    // Satellite ID
+    int _id;
+
+    // pointer to settings object
+    SwarmSettings * _settings;
+
+    // pointer to gravity object
+    State * _gravity;
+    
     // List of neighbouring satellites
     std::vector<Satellite*> _neighbours;
 
@@ -20,19 +29,20 @@ private:
 
     // Current satellite state.
     State _state;
-
-    // Satellite ID
-    int _id;
-
-    // pointer to settings object
-    SwarmSettings * _settings;
-    
-    std::vector<Satellite*> * _swarm;
         
+    // pointer to global satellite list
+    std::vector<Satellite*> * _swarm;
+    
+    // Current Forces
+    State fObs, fAtt, fDrg, fGrv;
 
-public:
-    Satellite(int satID, SwarmSettings * settings, std::vector<Satellite*> * swarm);
-    Satellite(int satID, SwarmSettings * settings, std::vector<Satellite*> * swarm, State initial_state);
+public:    
+    Satellite(int satID, 
+            SwarmSettings * settings, 
+            State * gravity, 
+            std::vector<Satellite*> * swarm, 
+            State initial_statee = State());
+    
     ~Satellite() {};
 
     int getID();
@@ -54,11 +64,10 @@ public:
     
     void calculateForces();
 
-    State forceRepulsive(Satellite * sat);
-    State forceRepulsive();
-    State forceAttractive();
+    State forceRepulsive(Satellite * sat = nullptr);
+    State forceAttractive(Satellite * sat = nullptr);
     State forceDrag();
-    State forceGravity(State * gravity);
+    State forceGravity(State * gravity = nullptr);
    
     
     void print();

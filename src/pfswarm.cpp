@@ -2,11 +2,16 @@
 
 
 PFSwarm::PFSwarm(SwarmSettings * settings){
+    #if DEBUG
+        std::cout << "Loading Settings" << std::endl;
+    #endif
     this->_settings = settings;
 }
 
 PFSwarm::~PFSwarm(){
-    std::cout << "Cleaning up!!" << std::endl;
+    #if DEBUG
+        std::cout << "Cleaning up!!" << std::endl;
+    #endif
     this->clearSatellites();
 }
 
@@ -21,12 +26,11 @@ void PFSwarm::run(int cycles, double convergence_limit){
     if (std::isnan(convergence_limit))
         convergence_limit = this->_settings->simulationConvergenceLimit();
     
-    this->_settings->print();
+//    this->_settings->print();
     
     // Run simulation iterations
     for(int idx = cycles; idx > 0; idx--){
         count++;
-
         this->_gravity.step();
         
         for (auto &sat: this->_satellites){ 
@@ -40,7 +44,7 @@ void PFSwarm::run(int cycles, double convergence_limit){
             std::cout << '|';
         else
             std::cout << '.';
-        //this->print();
+//        this->print();
         
         if ( abs(convergence_error) < convergence_limit ) break;
     }
@@ -56,20 +60,22 @@ void PFSwarm::setupSwarm()
 void PFSwarm::setupSwarm(int cntSatellite)
 {
     this->_gravity = State(IS_THREE_DIMENSTIONAL);
-    this->_gravity.x(100);
-    this->_gravity.y(200);
-    this->_gravity.z(300);
-    this->_gravity.vx(3);
+    this->_gravity.position.x = 100;
+    this->_gravity.position.y = 200;
+    this->_gravity.position.z = 300;
+    this->_gravity.velocity.x = 3;
     
     std::default_random_engine generator( (unsigned int)time(0) );
     std::uniform_int_distribution<int> uniform_dist(-50, 50);
     
     for (int idx = 0; idx < cntSatellite; idx++) {
         State init_state = State();
-        init_state.x(uniform_dist(generator));
-        init_state.y(uniform_dist(generator));
-        init_state.z(uniform_dist(generator));
-        this->addSatellites(new Satellite(idx, this->_settings, &this->_satellites, init_state));
+        init_state.position.x = uniform_dist(generator);
+        init_state.position.y = uniform_dist(generator);
+        init_state.position.z = uniform_dist(generator);
+        Satellite * sat = new Satellite(idx, _settings, &_gravity, &_satellites, init_state);
+        _satellites.push_back(sat);
+//        this->addSatellites(new Satellite(idx, this->_settings, &this->_gravity, &this->_satellites, init_state));
     }
 }
 
@@ -147,10 +153,11 @@ void PFSwarm::printRepulsiveForceTable(){
  */
 void PFSwarm::print()
 {
-    std::cout << "Current Gravity State " << std::endl;
-    this->_gravity.print();
-    
-    std::cout << "Current Swarm size: " << this->_satellites.size() << std::endl;
+//    std::cout << "Current Gravity State " << std::endl;
+//    _gravity.print();
+//    
+//    std::cout << "Current Swarm size: " << _satellites.size() << std::endl;
         
-    for (auto &sat : this->_satellites) sat->print();
+//    _satellites[0]->print();
+    for (auto &sat : _satellites) sat->print();
 }
