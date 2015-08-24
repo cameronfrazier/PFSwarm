@@ -45,6 +45,29 @@ public:
     
     ~Satellite() {};
 
+    struct RangeStats {
+        Vector3<double> minp = Vector3<double>(9999.,9999.,9999.); 
+        Vector3<double> maxp = Vector3<double>(-9999.,-9999.,-9999.); 
+        double total = 0;
+        double min = 9999;
+        double max = 0;
+        double std = 0;
+        double avg = 0;
+        std::vector<double> ranges;
+    };
+    
+    
+
+    struct ForceStats {
+        double total = 0;
+        double min = 9999;
+        double max = 0;
+        double std = 0;
+        double avg = 0;
+        std::vector<double> ranges;
+    };
+    
+    
     int getID();
     State getState();
 
@@ -69,6 +92,7 @@ public:
     State forceDrag();
     State forceGravity(State * gravity = nullptr);
    
+    RangeStats getRangeStats(); 
     
     void print();
 };

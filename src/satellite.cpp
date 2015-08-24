@@ -266,6 +266,32 @@ State Satellite::forceGravity(State * gravity)
 }
 
 
+Satellite::RangeStats Satellite::getRangeStats()
+{
+    RangeStats stats;
+    State nstate;
+    
+    for (auto &neighbour: _neighbours) {
+        stats.ranges.push_back(rangeToTarget(neighbour));
+        nstate = neighbour->getState();
+        stats.minp = stats.minp.leastOf(nstate.position);
+        stats.maxp = stats.maxp.greatestOf(nstate.position);
+    }
+        
+    for (auto r : stats.ranges){
+        stats.max = (stats.max < r) ? r : stats.max;
+        stats.min = (stats.min > r) ? r : stats.min;
+        stats.total += r;
+        stats.avg += (r / _neighbours.size());
+    }
+
+    for (auto r : stats.ranges)
+        stats.std += pow(r - stats.avg, 2);
+
+    stats.std = pow(stats.std / stats.ranges.size(), 0.5);
+
+    return stats;
+}
 
 
 void Satellite::print()

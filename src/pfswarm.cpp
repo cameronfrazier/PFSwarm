@@ -38,12 +38,16 @@ void PFSwarm::run(int cycles, double convergence_limit){
             sat->step();
         }
         
-        if (count % 100 == 0)
-            std::cout << count << std::endl;
-        else if (count % 10 == 0)
+        if (count % 100 == 0){
+            std::cout << count << "  ";  
+            printRangeStats();
+        } else if (count % 10 == 0) {
             std::cout << '|';
-        else
+        } else {
             std::cout << '.';
+        }
+        
+//        printRangeStats();
 //        this->print();
         
         if ( abs(convergence_error) < convergence_limit ) break;
@@ -121,7 +125,7 @@ void PFSwarm::printRangeTable(){
         std::cout << "\t" << sat->getID();
     std::cout << std::endl;
     
-    for (auto &saty: this->_satellites){
+    for (auto &saty: this->_satellites) {
         std::cout << saty->getID();
         for (auto &satx: this->_satellites)
             std::cout << "\t" << satx->rangeToTarget(saty);
@@ -132,7 +136,8 @@ void PFSwarm::printRangeTable(){
 /*
  Print repulsive force table
  */
-void PFSwarm::printRepulsiveForceTable(){    
+void PFSwarm::printRepulsiveForceTable()
+{    
     std::cout << std::fixed << std::setprecision(2);
     for(auto &sat : this->_satellites) 
         std::cout << "\t" << sat->getID();
@@ -145,6 +150,30 @@ void PFSwarm::printRepulsiveForceTable(){
             std::cout << "\t" << force.magnitude();
         }
         std::cout << std::endl;
+    }
+}
+
+void PFSwarm::printRangeStats()
+{
+    Vector3<double> minp = Vector3<double>(9999.,9999.,9999.);
+    Vector3<double> maxp = Vector3<double>(-9999.,-9999.,-9999.);
+    
+    std::vector<double> nRange;
+    
+    std::vector<Satellite::RangeStats> overall_stats;
+    
+    
+    for (auto &sat : _satellites)
+        overall_stats.push_back(sat->getRangeStats());
+    
+    
+    
+    for ( auto s: overall_stats ){
+	std::cout << std::fixed << std::setprecision(2);
+        std::cout << s.min << " < " << s.avg << " < " << s.max;
+        std::cout << " | " << s.std << " | " ;
+        s.maxp.print();
+        break;
     }
 }
 

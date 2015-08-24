@@ -33,6 +33,13 @@ double SwarmSettings::func(double _val){\
     return this->name;\
 }
 
+#define SETTING_BOOL(func,name) \
+bool SwarmSettings::func(int _val){ \
+    if ( _val >= 0 ) \
+        this->name = (bool)_val; \
+    return this->name; \
+}
+
 class SwarmSettings
 {
 private:
@@ -55,6 +62,11 @@ private:
     double force_gain_drag;
     double force_gain_gravity;
     
+    // display control
+    bool display_table_force;
+    bool display_table_range;
+    
+    
 public:
     SwarmSettings();
     ~SwarmSettings();
@@ -74,6 +86,9 @@ public:
     double forceGainAttractive(double _val = NAN);
     double forceGainDrag(double _val = NAN);
     double forceGainGravity(double _val = NAN);
+    
+    bool displayTableForce(int _val = -1);
+    bool displayTableRange(int _val = -1);
     
     void print();
 };

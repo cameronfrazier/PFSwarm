@@ -34,6 +34,7 @@ public:
     void clearSatellites();
 
     void printRangeTable();
+    void printRangeStats();
     void printRepulsiveForceTable();
     void print();
 };

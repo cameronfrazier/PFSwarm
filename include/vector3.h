@@ -9,6 +9,7 @@
 #define	VECTOR3_H
 
 #include <math.h>
+#include <iostream>
 
 template<class T>
 class Vector3
@@ -16,11 +17,11 @@ class Vector3
 public:
     T x, y, z;
     
-    Vector3(T x = 0, T y = 0, T z = 0)
+    Vector3<T>(T _x = 0, T _y = 0, T _z = 0)
     {
-        this->x = x;
-        this->y = y;
-        this->z = z;
+        this->x = _x;
+        this->y = _y;
+        this->z = _z;
     }
     Vector3<T>(const Vector3<T> & vec){
         this->x = (T) vec.x;
@@ -165,6 +166,30 @@ public:
         temp.y = y / param;
         temp.z = z / param;
         return temp;
+    }
+    
+    Vector3<T> leastOf(const Vector3& param)
+    {
+        Vector3<T> temp;
+        temp.x = (x < param.x) ? x : param.x;
+        temp.y = (y < param.y) ? y : param.y;
+        temp.z = (z < param.z) ? z : param.z;
+        return temp;
+    }
+    Vector3<T> greatestOf(const Vector3& param)
+    {
+        Vector3<T> temp;
+        temp.x = (x > param.x) ? x : param.x;
+        temp.y = (y > param.y) ? y : param.y;
+        temp.z = (z > param.z) ? z : param.z;
+        return temp;
+    }
+    
+    void print(bool withCR = true)
+    {
+	std::cout << std::fixed << std::setprecision(3);
+        std::cout << "[ " << x << ", " << y << ", " << z << " ]";
+        if (withCR) std::cout << std::endl;
     }
 };
 
